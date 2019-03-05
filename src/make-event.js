@@ -1,3 +1,4 @@
+
 export default () =>
   `
   <article class="trip-point">

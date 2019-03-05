@@ -17,7 +17,7 @@ filterSection.insertAdjacentHTML(`beforeend`, makeFilter(`Past`));
  */
 const renderEvent = function (section, count) {
   const events = new Array(count)
-    .fill()
+    //.fill()
     .map(makeEvent);
   section.insertAdjacentHTML(`beforeend`, events.join(``));
 };
