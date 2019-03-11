@@ -1,3 +1,4 @@
+import Event from './event.js';
 
 const EVENT_QUANTITY = 5;
 const PRICE_MIN = 1;
@@ -99,10 +100,10 @@ const renderTime = function () {
 };
 
 /**
- * @return {Object}
+ * @return {Event}
  */
 const generateEvent = () => {
-  return {
+  let eventData = {
     title: EVENT_TITLE[generateRandomInteger(0, EVENT_TITLE.length - 1)],
     type: EVENT_TYPE[generateRandomInteger(0, EVENT_TYPE.length - 1)],
     city: CITY[generateRandomInteger(0, CITY.length - 1)],
@@ -114,6 +115,7 @@ const generateEvent = () => {
     offer: generateOfferList(),
     description: generateDescription()
   };
+  return new Event(eventData);
 };
 
 /**
