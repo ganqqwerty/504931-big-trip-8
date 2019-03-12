@@ -16,12 +16,16 @@ export default class EventEdit {
 
   _onSubmitClick(evt) {
     evt.preventDefault();
-    typeof this._onSubmit === `function` && this._onSubmit();
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit();
+    }
   }
 
   _onResetClick(evt) {
     evt.preventDefault();
-    typeof this._onReset === `function` && this._onReset();
+    if (typeof this._onReset === `function`) {
+      this._onReset();
+    }
   }
 
   set onSubmit(fn) {

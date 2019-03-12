@@ -14,7 +14,9 @@ export default class Event {
   }
 
   _onClick() {
-    typeof this._onEdit === `function` && this._onEdit();
+    if (typeof this._onEdit === `function`) {
+      this._onEdit();
+    }
   }
 
   get element() {
