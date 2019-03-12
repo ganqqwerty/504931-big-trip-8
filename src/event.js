@@ -10,6 +10,19 @@ export default class Event {
     this._price = data.price;
     this._offer = data.offer;
     this._element = null;
+    this._onEdit = null;
+  }
+
+  _onClick() {
+    typeof this._onEdit === `function` && this._onEdit();
+  }
+
+  get element() {
+    return this._element;
+  }
+
+  set onEdit(fn) {
+    this._onEdit = fn;
   }
 
   get template() {
@@ -34,12 +47,24 @@ export default class Event {
   `.trim();
   }
 
-  render(container) {
-    if (this._element) {
-      container.removeChild(this._element);
-      this._element = null;
-    }
+  bind() {
+    this._element.querySelector(`.trip-point__title`)
+      .addEventListener(`click`, this._onClick.bind(this));
+  }
+
+  unbind() {
+    this._element.querySelector(`.trip-point__title`)
+      .removeEventListener(`click`, this._onClick);
+  }
+
+  render() {
     this._element = createElement(this.template);
-    container.appendChild(this._element);
+    this.bind();
+    return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element = null;
   }
 }
