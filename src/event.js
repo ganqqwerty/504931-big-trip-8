@@ -50,13 +50,17 @@ export default class Event {
   }
 
   bind() {
-    this._element.querySelector(`.trip-point__title`)
-      .addEventListener(`click`, this._onClick.bind(this));
+    if (this._element !== null) {
+      this._element.querySelector(`.trip-point__title`)
+        .addEventListener(`click`, this._onClick.bind(this));
+    }
   }
 
   unbind() {
-    this._element.querySelector(`.trip-point__title`)
-      .removeEventListener(`click`, this._onClick);
+    if (this._element !== null) {
+      this._element.querySelector(`.trip-point__title`)
+        .removeEventListener(`click`, this._onClick);
+    }
   }
 
   render() {

@@ -159,17 +159,21 @@ export default class EventEdit {
   }
 
   bind() {
-    this._element.querySelector(`form`)
-      .addEventListener(`submit`, this._onSubmitClick.bind(this));
-    this._element.querySelector(`button[type="reset"]`)
-      .addEventListener(`click`, this._onResetClick.bind(this));
+    if (this._element !== null) {
+      this._element.querySelector(`form`)
+        .addEventListener(`submit`, this._onSubmitClick.bind(this));
+      this._element.querySelector(`button[type="reset"]`)
+        .addEventListener(`click`, this._onResetClick.bind(this));
+    }
   }
 
   unbind() {
-    this._element.querySelector(`form`)
-      .removeEventListener(`submit`, this._onSubmitClick);
-    this._element.querySelector(`button[type="reset"]`)
-      .removeEventListener(`click`, this._onResetClick.bind(this));
+    if (this._element !== null) {
+      this._element.querySelector(`form`)
+        .removeEventListener(`submit`, this._onSubmitClick);
+      this._element.querySelector(`button[type="reset"]`)
+        .removeEventListener(`click`, this._onResetClick.bind(this));
+    }
   }
 
   render() {
