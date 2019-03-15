@@ -1,15 +1,14 @@
-import createElement from './create-element.js';
+import Component from './component.js';
 
-export default class EventEdit {
+export default class EventEdit extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._type = data.type;
     this._departureTime = data.departureTime;
     this._arrivalTime = data.arrivalTime;
-    this._duration = data.duration;
     this._price = data.price;
     this._offer = data.offer;
-    this._element = null;
     this._onSubmit = null;
     this._onReset = null;
   }
@@ -34,10 +33,6 @@ export default class EventEdit {
 
   set onReset(fn) {
     this._onReset = fn;
-  }
-
-  get element() {
-    return this._element;
   }
 
   get template() {
@@ -173,15 +168,5 @@ export default class EventEdit {
     this._element.querySelector(`button[type="reset"]`)
       .removeEventListener(`click`, this._onResetClick.bind(this));
   }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
-  }
 }
+
