@@ -72,7 +72,7 @@ const generateOfferList = function () {
 };
 
 /**
- * @return {Array}
+ * @return {Array} descriptionList
  */
 const generateDescription = function () {
   let descriptionList = [];
@@ -98,9 +98,7 @@ const renderTime = function () {
   return `${time.getHours() < 10 ? `0` + time.getHours() : time.getHours()}:${time.getMinutes() < 10 ? `0` + time.getMinutes() : time.getMinutes()}`;
 };
 
-/**
- * @return {Object}
- */
+
 const generateEvent = () => {
   return {
     title: EVENT_TITLE[generateRandomInteger(0, EVENT_TITLE.length - 1)],
@@ -112,18 +110,21 @@ const generateEvent = () => {
     duration: Math.floor(Math.random() * 7),
     picture: `//picsum.photos/300/150?r=${Math.random()}`,
     offer: generateOfferList(),
-    description: generateDescription()
+    description: generateDescription(),
   };
 };
-
 /**
  * @param {Number} count
- * @return {Array}
+ * @return {Array} eventList
  */
 const generateEventList = function (count = EVENT_QUANTITY) {
   let eventList = [];
+  let eventItem;
   for (let i = 0; i < count; i++) {
-    eventList[i] = generateEvent();
+    do {
+      eventItem = generateEvent();
+    } while (eventList.indexOf(eventItem) !== -1);
+    eventList.push(eventItem);
   }
   return eventList;
 };
