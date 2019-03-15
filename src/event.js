@@ -49,18 +49,16 @@ export default class Event {
   `.trim();
   }
 
+  // Вызов метода bind() возможен только после вызова render()
   bind() {
-    if (this._element !== null) {
-      this._element.querySelector(`.trip-point__title`)
-        .addEventListener(`click`, this._onClick.bind(this));
-    }
+    this._element.querySelector(`.trip-point__title`)
+      .addEventListener(`click`, this._onClick.bind(this));
   }
 
+  // Вызов метода unbind() возможен только после вызова render()
   unbind() {
-    if (this._element !== null) {
-      this._element.querySelector(`.trip-point__title`)
-        .removeEventListener(`click`, this._onClick);
-    }
+    this._element.querySelector(`.trip-point__title`)
+      .removeEventListener(`click`, this._onClick);
   }
 
   render() {
