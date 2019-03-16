@@ -1,7 +1,8 @@
-import createElement from './create-element.js';
+import Component from './component.js';
 
-export default class Event {
+export default class Event extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._type = data.type;
     this._departureTime = data.departureTime;
@@ -9,7 +10,6 @@ export default class Event {
     this._duration = data.duration;
     this._price = data.price;
     this._offer = data.offer;
-    this._element = null;
     this._onEdit = null;
   }
 
@@ -17,10 +17,6 @@ export default class Event {
     if (typeof this._onEdit === `function`) {
       this._onEdit();
     }
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onEdit(fn) {
@@ -59,16 +55,5 @@ export default class Event {
   unbind() {
     this._element.querySelector(`.trip-point__title`)
       .removeEventListener(`click`, this._onClick);
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }
