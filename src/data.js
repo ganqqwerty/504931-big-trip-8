@@ -1,3 +1,4 @@
+import moment from 'moment';
 
 const EVENT_QUANTITY = 5;
 const PRICE_MIN = 1;
@@ -92,10 +93,10 @@ const generateDescription = function () {
  */
 const renderTime = function () {
   let randomTime = Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
-  let time = new Date(randomTime);
-  time.setHours(generateRandomInteger(0, 23));
-  time.setMinutes(generateRandomInteger(0, 59));
-  return `${time.getHours() < 10 ? `0` + time.getHours() : time.getHours()}:${time.getMinutes() < 10 ? `0` + time.getMinutes() : time.getMinutes()}`;
+  let time = moment(randomTime);
+  time.hours(generateRandomInteger(0, 23));
+  time.minutes(generateRandomInteger(0, 59));
+  return time;
 };
 
 
@@ -107,7 +108,6 @@ const generateEvent = () => {
     price: generateRandomInteger(PRICE_MIN, PRICE_MAX),
     departureTime: renderTime(),
     arrivalTime: renderTime(),
-    duration: Math.floor(Math.random() * 7),
     picture: `//picsum.photos/300/150?r=${Math.random()}`,
     offer: generateOfferList(),
     description: generateDescription(),

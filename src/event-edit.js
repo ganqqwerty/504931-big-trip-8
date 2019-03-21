@@ -1,4 +1,6 @@
 import Component from './component.js';
+import flatpickr from "flatpickr";
+import moment from 'moment';
 
 export default class EventEdit extends Component {
   constructor(data) {
@@ -13,11 +15,36 @@ export default class EventEdit extends Component {
     this._onReset = null;
   }
 
+  _processForm(formData) {
+    const entry = {
+      title: ``,
+      type: ``,
+      price: ``,
+      departureTime: ``,
+      arrivalTime: ``,
+      offer: ``,
+    };
+
+    const eventEditMapper = EventEdit.createMapper(entry);
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      if (typeof eventEditMapper[property] === `function`) {
+        eventEditMapper[property](value);
+      }
+    }
+    return entry;
+  }
+
+
   _onSubmitClick(evt) {
     evt.preventDefault();
+
+    const formData = new FormData(this._element.querySelector(`form`));
+    const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
-      this._onSubmit();
+      this._onSubmit(newData);
     }
+    this.update(newData);
   }
 
   _onResetClick(evt) {
@@ -88,7 +115,7 @@ export default class EventEdit extends Component {
     
           <label class="point__time">
             choose time
-            <input class="point__input" type="text" value="${this._departureTime} — ${this._arrivalTime}" name="time" placeholder="${this._departureTime} — ${this._arrivalTime}">
+            <input class="point__input" type="text" value="${this._departureTime.format(`YYYY-MM-DD HH:mm`)}" name="time" placeholder="${this._departureTime} — ${this._arrivalTime}">
           </label>
     
           <label class="point__price">
@@ -159,6 +186,9 @@ export default class EventEdit extends Component {
       .addEventListener(`submit`, this._onSubmitClick.bind(this));
     this._element.querySelector(`button[type="reset"]`)
       .addEventListener(`click`, this._onResetClick.bind(this));
+
+    let timeInput = this._element.querySelector(`input[name='time']`);
+    flatpickr(timeInput, {enableTime: true, dateFormat: `Y-m-d H:i`, time_24hr: true});
   }
 
   // Вызов метода unbind() возможен только после вызова render()
@@ -168,5 +198,30 @@ export default class EventEdit extends Component {
     this._element.querySelector(`button[type="reset"]`)
       .removeEventListener(`click`, this._onResetClick.bind(this));
   }
-}
 
+  update(data) {
+    this._title = data.title;
+    this._type = data.type;
+    this._price = data.price;
+    this._arrivalTime = data.arrivalTime;
+    this._departureTime = data.departureTime;
+    this._offer = data.offer;
+  }
+
+  static createMapper(target) {
+    return {
+      destination: (value) => {
+        target.title = value;
+      },
+      price: (value) => {
+        target.price = value;
+      },
+      offer: (value) => {
+        target.offer = value;
+      },
+      time: (value) => {
+        target.departureTime = moment(value);
+      }
+    };
+  }
+}

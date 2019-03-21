@@ -30,4 +30,6 @@ export default class Component {
     this.unbind();
     this._element = null;
   }
+
+  update() {}
 }
