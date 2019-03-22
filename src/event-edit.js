@@ -13,6 +13,10 @@ export default class EventEdit extends Component {
     this._offer = data.offer;
     this._onSubmit = null;
     this._onReset = null;
+    this._state.isFavorite = false;
+    this._onResetClick = this._onResetClick.bind(this);
+    this._onSubmitClick = this._onSubmitClick.bind(this);
+    this._onChangeFavorite = this._onChangeFavorite.bind(this);
   }
 
   _processForm(formData) {
@@ -52,6 +56,17 @@ export default class EventEdit extends Component {
     if (typeof this._onReset === `function`) {
       this._onReset();
     }
+  }
+
+  _onChangeFavorite() {
+    this._state.isFavorite = !this._state.isFavorite;
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
+
+  _partialUpdate() {
+    this._element.innerHTML = this.template;
   }
 
   set onSubmit(fn) {
@@ -130,7 +145,7 @@ export default class EventEdit extends Component {
           </div>
     
           <div class="paint__favorite-wrap">
-            <input type="checkbox" class="point__favorite-input visually-hidden" id="favorite" name="favorite">
+            <input type="checkbox" class="point__favorite-input visually-hidden" id="favorite" name="favorite" ${this._state.isFavorite && `checked`}>
             <label class="point__favorite" for="favorite">favorite</label>
           </div>
         </header>
@@ -183,12 +198,14 @@ export default class EventEdit extends Component {
   // Вызов метода bind() возможен только после вызова render()
   bind() {
     this._element.querySelector(`form`)
-      .addEventListener(`submit`, this._onSubmitClick.bind(this));
+      .addEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`button[type="reset"]`)
-      .addEventListener(`click`, this._onResetClick.bind(this));
+      .addEventListener(`click`, this._onResetClick);
+    this.element.querySelector(`.point__favorite-input`)
+      .addEventListener(`click`, this._onChangeFavorite);
 
     let timeInput = this._element.querySelector(`input[name='time']`);
-    flatpickr(timeInput, {enableTime: true, dateFormat: `Y-m-d H:i`, time_24hr: true});
+    flatpickr(timeInput, {enableTime: true, dateFormat: `Y-m-d H:i`});
   }
 
   // Вызов метода unbind() возможен только после вызова render()
@@ -196,7 +213,9 @@ export default class EventEdit extends Component {
     this._element.querySelector(`form`)
       .removeEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`button[type="reset"]`)
-      .removeEventListener(`click`, this._onResetClick.bind(this));
+      .removeEventListener(`click`, this._onResetClick);
+    this.element.querySelector(`.point__favorite-input`)
+      .removeEventListener(`click`, this._onChangeFavorite);
   }
 
   update(data) {
