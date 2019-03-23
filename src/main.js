@@ -20,21 +20,8 @@ const renderEvents = function (section, arr) {
       eventComponent.unrender();
     };
 
-
-    // editEventComponent.onSubmit = () => {
-    //   eventComponent.render();
-    //   section.replaceChild(eventComponent.element, editEventComponent.element);
-    //   editEventComponent.unrender();
-    // };
-
     editEventComponent.onSubmit = (newObject) => {
-      event.title = newObject.title;
-      event.price = newObject.price;
-      event.offer = newObject.offer;
-      event.arrivalTime = newObject.arrivalTime;
-      event.departureTime = newObject.departureTime;
-      //event.type = newObject.type;
-      eventComponent.update(event);
+      eventComponent.update(newObject);
       eventComponent.render();
       section.replaceChild(eventComponent.element, editEventComponent.element);
       editEventComponent.unrender();
@@ -49,5 +36,3 @@ const renderEvents = function (section, arr) {
 };
 
 renderEvents(eventSection, eventList());
-
-

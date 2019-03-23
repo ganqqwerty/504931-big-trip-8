@@ -11,17 +11,22 @@ const EVENT_TITLE = [
 ];
 
 const EVENT_TYPE = [
-  `🚕`,
-  `🚌`,
-  `🚂`,
-  `🛳️`,
-  `🚊`,
-  `🚗`,
-  `✈️`,
-  `🏨`,
-  `🏛️`,
-  `🍴`
+  `taxi`,
+  `bus`,
+  `train`,
+  `flight`,
+  `checkin`,
+  `sightseeing`
 ];
+
+const Type = {
+  taxi: `🚕`,
+  bus: `🚌`,
+  train: `🚂`,
+  flight: `✈️`,
+  checkin: `🏨`,
+  sightseeing: `🏛️`
+};
 
 const CITY = [
   `Vienna`,
@@ -129,4 +134,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList};
+export {generateEventList, Type};
