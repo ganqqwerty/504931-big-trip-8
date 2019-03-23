@@ -36,11 +36,30 @@ const CITY = [
 ];
 
 const OFFER_LIST = [
-  `Add luggage`,
-  `Switch to comfort class`,
-  `Add meal`,
-  `Choose seats`
+  `luggage`,
+  `class`,
+  `meal`,
+  `seats`
 ];
+
+const Offer = {
+  luggage: {
+    title: `Add luggage`,
+    price: 30
+  },
+  class: {
+    title: `Switch to comfort class`,
+    price: 100
+  },
+  meal: {
+    title: `Add meal`,
+    price: 15
+  },
+  seats: {
+    title: `Choose seats`,
+    price: 5
+  }
+};
 
 const DESCRIPTION_LIST = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -67,7 +86,7 @@ const generateRandomInteger = (minValue, maxValue) => Math.floor(Math.random() *
 const generateOfferList = function () {
   let offerList = [];
   let element = ``;
-  let offerQuantity = generateRandomInteger(0, 2);
+  let offerQuantity = generateRandomInteger(0, 4);
   for (let i = 0; i < offerQuantity; i++) {
     do {
       element = OFFER_LIST[generateRandomInteger(0, OFFER_LIST.length - 1)];
@@ -94,7 +113,7 @@ const generateDescription = function () {
 };
 
 /**
- * @return {string}
+ * @return {moment.Moment}
  */
 const renderTime = function () {
   let randomTime = Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
@@ -134,4 +153,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList, Type};
+export {generateEventList, Type, Offer};

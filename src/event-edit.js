@@ -1,7 +1,7 @@
 import Component from './component.js';
 import flatpickr from 'flatpickr';
 import moment from 'moment';
-import {Type} from './data.js';
+import {Type, Offer} from './data.js';
 import createElement from './create-element.js';
 
 export default class EventEdit extends Component {
@@ -29,7 +29,7 @@ export default class EventEdit extends Component {
       price: ``,
       departureTime: ``,
       arrivalTime: ``,
-      offer: ``,
+      offer: [],
     };
 
     const eventEditMapper = EventEdit.createMapper(entry);
@@ -166,24 +166,24 @@ export default class EventEdit extends Component {
             <h3 class="point__details-title">offers</h3>
 
             <div class="point__offers-wrap">
-              <input class="point__offers-input visually-hidden" type="checkbox" id="add-luggage" name="offer" value="add-luggage">
+              <input class="point__offers-input visually-hidden" type="checkbox" id="add-luggage" name="offer" value="luggage" ${this._offer.indexOf(`luggage`) !== -1 && `checked`}>
               <label for="add-luggage" class="point__offers-label">
-                <span class="point__offer-service">${this._offer}</span> + €<span class="point__offer-price">30</span>
+                <span class="point__offer-service">Add luggage</span> + €<span class="point__offer-price">${Offer[`luggage`].price}</span>
               </label>
 
-              <input class="point__offers-input visually-hidden" type="checkbox" id="switch-to-comfort-class" name="offer" value="switch-to-comfort-class">
+              <input class="point__offers-input visually-hidden" type="checkbox" id="switch-to-comfort-class" name="offer" value="class" ${this._offer.indexOf(`class`) !== -1 && `checked`}>
               <label for="switch-to-comfort-class" class="point__offers-label">
-                <span class="point__offer-service">${this._offer}</span> + €<span class="point__offer-price">100</span>
+                <span class="point__offer-service">Switch to comfort class</span> + €<span class="point__offer-price">${Offer[`class`].price}</span>
               </label>
 
-              <input class="point__offers-input visually-hidden" type="checkbox" id="add-meal" name="offer" value="add-meal">
+              <input class="point__offers-input visually-hidden" type="checkbox" id="add-meal" name="offer" value="meal" ${this._offer.indexOf(`meal`) !== -1 && `checked`}>
               <label for="add-meal" class="point__offers-label">
-                <span class="point__offer-service">${this._offer}</span> + €<span class="point__offer-price">15</span>
+                <span class="point__offer-service">Add meal </span> + €<span class="point__offer-price">${Offer[`meal`].price}</span>
               </label>
 
-              <input class="point__offers-input visually-hidden" type="checkbox" id="choose-seats" name="offer" value="choose-seats">
+              <input class="point__offers-input visually-hidden" type="checkbox" id="choose-seats" name="offer" value="seats" ${this._offer.indexOf(`seats`) !== -1 && `checked`}>
               <label for="choose-seats" class="point__offers-label">
-                <span class="point__offer-service">${this._offer}</span> + €<span class="point__offer-price">5</span>
+                <span class="point__offer-service">Choose seats</span> + €<span class="point__offer-price">${Offer[`seats`].price}</span>
               </label>
             </div>
 
@@ -255,7 +255,7 @@ export default class EventEdit extends Component {
         target.price = value;
       },
       offer: (value) => {
-        target.offer = value;
+        target.offer.push(value);
       },
       time: (value) => {
         target.departureTime = moment(value);
