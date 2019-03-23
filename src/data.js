@@ -1,3 +1,4 @@
+import moment from 'moment';
 
 const EVENT_QUANTITY = 5;
 const PRICE_MIN = 1;
@@ -10,17 +11,22 @@ const EVENT_TITLE = [
 ];
 
 const EVENT_TYPE = [
-  `🚕`,
-  `🚌`,
-  `🚂`,
-  `🛳️`,
-  `🚊`,
-  `🚗`,
-  `✈️`,
-  `🏨`,
-  `🏛️`,
-  `🍴`
+  `taxi`,
+  `bus`,
+  `train`,
+  `flight`,
+  `checkin`,
+  `sightseeing`
 ];
+
+const Type = {
+  taxi: `🚕`,
+  bus: `🚌`,
+  train: `🚂`,
+  flight: `✈️`,
+  checkin: `🏨`,
+  sightseeing: `🏛️`
+};
 
 const CITY = [
   `Vienna`,
@@ -30,11 +36,30 @@ const CITY = [
 ];
 
 const OFFER_LIST = [
-  `Add luggage`,
-  `Switch to comfort class`,
-  `Add meal`,
-  `Choose seats`
+  `luggage`,
+  `class`,
+  `meal`,
+  `seats`
 ];
+
+const Offer = {
+  luggage: {
+    title: `Add luggage`,
+    price: 30
+  },
+  class: {
+    title: `Switch to comfort class`,
+    price: 100
+  },
+  meal: {
+    title: `Add meal`,
+    price: 15
+  },
+  seats: {
+    title: `Choose seats`,
+    price: 5
+  }
+};
 
 const DESCRIPTION_LIST = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -61,7 +86,7 @@ const generateRandomInteger = (minValue, maxValue) => Math.floor(Math.random() *
 const generateOfferList = function () {
   let offerList = [];
   let element = ``;
-  let offerQuantity = generateRandomInteger(0, 2);
+  let offerQuantity = generateRandomInteger(0, 4);
   for (let i = 0; i < offerQuantity; i++) {
     do {
       element = OFFER_LIST[generateRandomInteger(0, OFFER_LIST.length - 1)];
@@ -88,14 +113,14 @@ const generateDescription = function () {
 };
 
 /**
- * @return {string}
+ * @return {moment.Moment}
  */
 const renderTime = function () {
   let randomTime = Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
-  let time = new Date(randomTime);
-  time.setHours(generateRandomInteger(0, 23));
-  time.setMinutes(generateRandomInteger(0, 59));
-  return `${time.getHours() < 10 ? `0` + time.getHours() : time.getHours()}:${time.getMinutes() < 10 ? `0` + time.getMinutes() : time.getMinutes()}`;
+  let time = moment(randomTime);
+  time.hours(generateRandomInteger(0, 23));
+  time.minutes(generateRandomInteger(0, 59));
+  return time;
 };
 
 
@@ -107,7 +132,6 @@ const generateEvent = () => {
     price: generateRandomInteger(PRICE_MIN, PRICE_MAX),
     departureTime: renderTime(),
     arrivalTime: renderTime(),
-    duration: Math.floor(Math.random() * 7),
     picture: `//picsum.photos/300/150?r=${Math.random()}`,
     offer: generateOfferList(),
     description: generateDescription(),
@@ -129,4 +153,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList};
+export {generateEventList, Type, Offer};

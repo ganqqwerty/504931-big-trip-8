@@ -20,8 +20,8 @@ const renderEvents = function (section, arr) {
       eventComponent.unrender();
     };
 
-
-    editEventComponent.onSubmit = () => {
+    editEventComponent.onSubmit = (newObject) => {
+      eventComponent.update(newObject);
       eventComponent.render();
       section.replaceChild(eventComponent.element, editEventComponent.element);
       editEventComponent.unrender();
@@ -36,5 +36,3 @@ const renderEvents = function (section, arr) {
 };
 
 renderEvents(eventSection, eventList());
-
-
