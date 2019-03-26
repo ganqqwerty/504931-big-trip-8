@@ -3,7 +3,11 @@ import Event from './event.js';
 import EventEdit from './event-edit.js';
 
 const eventSection = document.querySelector(`.trip-day__items`);
-
+const deleteEvent = (array, itemToDelete) => {
+  const index = array.findIndex((it) => it === itemToDelete);
+  delete array[index];
+  return array;
+};
 /**
  * @param {Node} section
  * @param {Array} arr
@@ -27,12 +31,13 @@ const renderEvents = function (section, arr) {
       editEventComponent.unrender();
     };
 
-    editEventComponent.onReset = () => {
-      eventComponent.render();
-      section.replaceChild(eventComponent.element, editEventComponent.element);
-      editEventComponent.unrender();
+    editEventComponent.onDelete = () => {
+      deleteEvent(arr, element);
+      // section.replaceChild(eventComponent.element, editEventComponent.element);
+      // editEventComponent.unrender();
     };
   });
 };
 
 renderEvents(eventSection, eventList());
+

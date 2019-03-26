@@ -14,9 +14,9 @@ export default class EventEdit extends Component {
     this._price = data.price;
     this._offer = data.offer;
     this._onSubmit = null;
-    this._onReset = null;
+    this._onDelete = null;
     this._state.isFavorite = false;
-    this._onResetClick = this._onResetClick.bind(this);
+    this._onDeleteClick = this._onDeleteClick.bind(this);
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onChangeFavorite = this._onChangeFavorite.bind(this);
     this._onChangeType = this._onChangeType.bind(this);
@@ -54,10 +54,10 @@ export default class EventEdit extends Component {
     this.update(newData);
   }
 
-  _onResetClick(evt) {
+  _onDeleteClick(evt) {
     evt.preventDefault();
-    if (typeof this._onReset === `function`) {
-      this._onReset();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
     }
   }
 
@@ -84,8 +84,8 @@ export default class EventEdit extends Component {
     this._onSubmit = fn;
   }
 
-  set onReset(fn) {
-    this._onReset = fn;
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
 
   get template() {
@@ -211,7 +211,7 @@ export default class EventEdit extends Component {
     this._element.querySelector(`form`)
       .addEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`button[type="reset"]`)
-      .addEventListener(`click`, this._onResetClick);
+      .addEventListener(`click`, this._onDeleteClick);
     this.element.querySelector(`.point__favorite-input`)
       .addEventListener(`click`, this._onChangeFavorite);
     this.element.querySelectorAll(`input[name="type"]`).forEach((radio) => {
@@ -226,7 +226,7 @@ export default class EventEdit extends Component {
     this._element.querySelector(`form`)
       .removeEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`button[type="reset"]`)
-      .removeEventListener(`click`, this._onResetClick);
+      .removeEventListener(`click`, this._onDeleteClick);
     this.element.querySelector(`.point__favorite-input`)
       .removeEventListener(`click`, this._onChangeFavorite);
     this.element.querySelectorAll(`input[name="type"]`).forEach((radio) => {
