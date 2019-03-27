@@ -1,12 +1,12 @@
 import Component from "./component";
 
 export default class Filter extends Component {
-  constructor(data) {
+  constructor(name, title) {
     super();
-    this._title = data.title;
-    this._name = data.name;
+    this._title = title;
+    this._name = name;
     this._onFilter = null;
-    this._onFilterClick = this._onFilterClick.bind;
+    this._onFilterClick = this._onFilterClick.bind(this);
   }
 
   _onFilterClick() {
@@ -21,19 +21,20 @@ export default class Filter extends Component {
 
   get template() {
     return `
-    <form class="trip-filter">
-          <input type="radio" id="filter-everything" name="filter" value="everything" checked>
-          <label class="trip-filter__item" for="filter-everything">${this._title}</label>
-        </form>`.trim();
+      <span>
+        <input type="radio" id="filter-${this._name}" name="filter" value="${this._name}" checked>
+         <label class="trip-filter__item" for="filter-${this._name}">${this._title}</label>        
+      </span>
+        `.trim();
   }
 
   bind() {
-    this._element.querySelector(`.trip-filter`)
+    this._element.querySelector(`#filter-${this._name}`)
       .addEventListener(`click`, this._onFilterClick);
   }
 
   unbind() {
-    this._element.querySelector(`.trip-filter`)
+    this._element.querySelector(`#filter-${this._name}`)
       .removeEventListener(`click`, this._onFilterClick);
   }
 }

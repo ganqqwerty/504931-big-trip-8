@@ -73,6 +73,24 @@ const DESCRIPTION_LIST = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
+const Filters = [
+  {
+    title: `Everything`,
+    name: `everything`,
+    filter: () => true
+  },
+  {
+    title: `Future`,
+    name: `future`,
+    filter: (it) => it.departureTime > moment()
+  },
+  {
+    title: `Past`,
+    name: `past`,
+    filter: (it) => it.arrivalTime < moment()
+  },
+];
+
 /**
  * @param {number} minValue
  * @param {number} maxValue
@@ -153,4 +171,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList, Type, Offer};
+export {generateEventList, Type, Offer, Filters};

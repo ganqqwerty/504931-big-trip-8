@@ -2,12 +2,11 @@ import {generateEventList} from './data.js';
 import Event from './event.js';
 import EventEdit from './event-edit.js';
 import Filter from './filter.js';
-import moment from "moment";
 import {moneyChart, transportChart} from "./charts";
-import {Offer} from "./data";
+import {Offer, Filters} from "./data";
 
 const eventSection = document.querySelector(`.trip-day__items`);
-const filters = document.querySelector(`.trip-filter`);
+const filtersForm = document.querySelector(`.trip-filter`);
 const eventList = generateEventList();
 /**
  * @param {Array} array
@@ -18,17 +17,6 @@ const deleteEvent = (array, itemToDelete) => {
   const index = array.findIndex((it) => it === itemToDelete);
   delete array[index];
   return array;
-};
-
-const filterEvents = (events, filterName) => {
-  switch (filterName) {
-    case `filter-everything`:
-      return events;
-    case `filter-future`:
-      return events.filter((it) => it.departureTime > moment());
-    case `filter-past`:
-      return events.filter((it) => it.arrivalTime < moment());
-  }
 };
 
 /**
@@ -62,16 +50,19 @@ const renderEvents = function (section, arr) {
     };
   });
 };
-renderEvents(eventSection, eventList);
-// const renderFilters = function () {
-//   const filter = new Filter();
-//   filter.onFilter = (evt) => {
-//     const filterName = evt.target.id;
-//     const filteredEvents = filterEvents(eventList, filterName);
-//     renderEvents(eventSection, filteredEvents);
-//   };
-// };
 
+
+// Фильтры
+const renderFilters = function () {
+  Filters.forEach((item) => {
+    const filter = new Filter(item.name, item.title);
+    filter.onFilter = () => {
+      const filteredEvents = eventList.filter(item.filter);
+      renderEvents(eventSection, filteredEvents);
+    };
+    filtersForm.appendChild(filter.render());
+  });
+};
 
 
 // Статистика транспорта
@@ -106,3 +97,6 @@ const priceCount = eventList.reduce((totalPrices, event) => {
 }, []);
 moneyChart.data.datasets[0].data = Object.values(priceCount);
 moneyChart.update();
+
+renderEvents(eventSection, eventList);
+renderFilters();
