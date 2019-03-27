@@ -127,7 +127,7 @@ const renderTime = function () {
 const generateEvent = () => {
   return {
     title: EVENT_TITLE[generateRandomInteger(0, EVENT_TITLE.length - 1)],
-    type: EVENT_TYPE[generateRandomInteger(0, EVENT_TYPE.length - 1)],
+    type: EVENT_TYPE[generateRandomInteger(0, EVENT_TYPE.length)],
     city: CITY[generateRandomInteger(0, CITY.length - 1)],
     price: generateRandomInteger(PRICE_MIN, PRICE_MAX),
     departureTime: renderTime(),
