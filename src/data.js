@@ -73,6 +73,24 @@ const DESCRIPTION_LIST = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
+const Filters = [
+  {
+    title: `Everything`,
+    name: `everything`,
+    filter: () => true
+  },
+  {
+    title: `Future`,
+    name: `future`,
+    filter: (it) => it.departureTime > moment()
+  },
+  {
+    title: `Past`,
+    name: `past`,
+    filter: (it) => it.arrivalTime < moment()
+  },
+];
+
 /**
  * @param {number} minValue
  * @param {number} maxValue
@@ -127,7 +145,7 @@ const renderTime = function () {
 const generateEvent = () => {
   return {
     title: EVENT_TITLE[generateRandomInteger(0, EVENT_TITLE.length - 1)],
-    type: EVENT_TYPE[generateRandomInteger(0, EVENT_TYPE.length - 1)],
+    type: EVENT_TYPE[generateRandomInteger(0, EVENT_TYPE.length)],
     city: CITY[generateRandomInteger(0, CITY.length - 1)],
     price: generateRandomInteger(PRICE_MIN, PRICE_MAX),
     departureTime: renderTime(),
@@ -153,4 +171,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList, Type, Offer};
+export {generateEventList, Type, Offer, Filters};
