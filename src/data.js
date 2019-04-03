@@ -1,5 +1,9 @@
 import moment from 'moment';
+import API from "./api";
 
+const AUTHORIZATION = `Basic eo0w590ik29889m`;
+const END_POINT = `https://es8-demo-srv.appspot.com/big-trip/`;
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 const EVENT_QUANTITY = 5;
 const PRICE_MIN = 1;
 const PRICE_MAX = 1000;
@@ -61,6 +65,10 @@ const Offer = {
   }
 };
 
+let destinationList = [];
+api.getDestinations().then((destinations) => {
+  destinationList = destinations;
+});
 const DESCRIPTION_LIST = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
@@ -171,4 +179,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList, Type, Offer, Filters};
+export {generateEventList, Type, Offer, Filters, api, destinationList};

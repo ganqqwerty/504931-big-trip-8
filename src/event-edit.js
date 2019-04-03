@@ -1,17 +1,17 @@
 import Component from './component.js';
 import flatpickr from 'flatpickr';
 import moment from 'moment';
-import {Type, Offer} from './data.js';
+import {Type, Offer, destinationList} from './data.js';
 import createElement from './create-element.js';
 
 export default class EventEdit extends Component {
   constructor(data) {
     super();
-    this._title = data.title;
     this._type = data.type;
     this._departureTime = data.departureTime;
     this._arrivalTime = data.arrivalTime;
     this._price = data.price;
+    this._destination = data.destination;
     this._offer = data.offer;
     this._onSubmit = null;
     this._onDelete = null;
@@ -20,11 +20,12 @@ export default class EventEdit extends Component {
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onChangeFavorite = this._onChangeFavorite.bind(this);
     this._onChangeType = this._onChangeType.bind(this);
+    this._onChangeDestination = this._onChangeDestination.bind(this);
   }
 
   _processForm(formData) {
     const entry = {
-      title: ``,
+      destination: ``,
       type: ``,
       price: ``,
       departureTime: ``,
@@ -75,6 +76,16 @@ export default class EventEdit extends Component {
     this.bind();
   }
 
+  _onChangeDestination() {
+
+    const formData = new FormData(this._element.querySelector(`form`));
+    const newData = this._processForm(formData);
+    this.update(newData);
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
+
   _partialUpdate() {
     let newElement = createElement(this.template);
     this._element.innerHTML = newElement.innerHTML;
@@ -88,7 +99,19 @@ export default class EventEdit extends Component {
     this._onDelete = fn;
   }
 
+  get title() {
+    return this._destination.name;
+  }
+
   get template() {
+    let destinations = destinationList.map((destination) => `
+      <option value="${destination.name}"></option>
+    `.trim()
+    );
+    let destinationImageList = this._destination.pictures.map((picture) => `
+    <img src="${picture.src}" alt="${picture.description}" class="point__destination-image">`
+      .trim()
+    );
     return `
     <article class="point">
       <form action="" method="get">
@@ -130,19 +153,17 @@ export default class EventEdit extends Component {
 
           <div class="point__destination-wrap">
             <label class="point__destination-label" for="destination"></label>
-            <input class="point__destination-input" list="destination-select" id="destination" value="${this._title}" name="destination">
+            <input class="point__destination-input" list="destination-select" id="destination" value="${this.title}" name="destination">
             <datalist id="destination-select">
-              <option value="airport"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
-              <option value="hotel"></option>
+              ${destinations.join(``)}
             </datalist>
           </div>
 
-          <label class="point__time">
+          <div class="point__time">
             choose time
-            <input class="point__input" type="text" value="${this._departureTime.format(`YYYY-MM-DD HH:mm`)}" name="time" placeholder="${this._departureTime} — ${this._arrivalTime}">
-          </label>
+            <input class="point__input" type="text" value="${this._departureTime.format(`YYYY-MM-DD HH:mm`)}" name="start" placeholder="${this._departureTime}">
+            <input class="point__input" type="text" value="${this._arrivalTime.format(`YYYY-MM-DD HH:mm`)}" name="end" placeholder="${this._arrivalTime}">
+          </div>
 
           <label class="point__price">
             write price
@@ -190,13 +211,8 @@ export default class EventEdit extends Component {
           </section>
           <section class="point__destination">
             <h3 class="point__details-title">Destination</h3>
-            <p class="point__destination-text">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-            <div class="point__destination-images">
-              <img src="http://picsum.photos/330/140?r=123" alt="picture from place" class="point__destination-image">
-              <img src="http://picsum.photos/300/200?r=1234" alt="picture from place" class="point__destination-image">
-              <img src="http://picsum.photos/300/100?r=12345" alt="picture from place" class="point__destination-image">
-              <img src="http://picsum.photos/200/300?r=123456" alt="picture from place" class="point__destination-image">
-              <img src="http://picsum.photos/100/300?r=1234567" alt="picture from place" class="point__destination-image">
+            <p class="point__destination-text">${this._destination.description}</p>
+            <div class="point__destination-images">${destinationImageList.join(``)}
             </div>
           </section>
           <input type="hidden" class="point__total-price" name="total-price" value="">
@@ -217,8 +233,12 @@ export default class EventEdit extends Component {
     this.element.querySelectorAll(`input[name="type"]`).forEach((radio) => {
       radio.addEventListener(`change`, this._onChangeType);
     });
-    let timeInput = this._element.querySelector(`input[name='time']`);
-    flatpickr(timeInput, {enableTime: true, dateFormat: `Y-m-d H:i`});
+    this.element.querySelector(`.point__destination-input`).addEventListener(`change`, this._onChangeDestination);
+    let timeStart = this._element.querySelector(`input[name='start']`);
+    flatpickr(timeStart, {enableTime: true, dateFormat: `Y-m-d H:i`});
+
+    let timeEnd = this._element.querySelector(`input[name='end']`);
+    flatpickr(timeEnd, {enableTime: true, dateFormat: `Y-m-d H:i`});
   }
 
   // Вызов метода unbind() возможен только после вызова render()
@@ -232,10 +252,12 @@ export default class EventEdit extends Component {
     this.element.querySelectorAll(`input[name="type"]`).forEach((radio) => {
       radio.removeEventListener(`change`, this._onChangeType);
     });
+    this.element.querySelector(`.point__destination-input`).removeEventListener(`change`, this._onChangeDestination);
   }
 
   update(data) {
-    this._title = data.title;
+
+    this._destination = data.destination;
     this._type = data.type;
     this._price = data.price;
     this._arrivalTime = data.arrivalTime;
@@ -249,7 +271,11 @@ export default class EventEdit extends Component {
         target.type = value;
       },
       destination: (value) => {
-        target.title = value;
+        for (let item of destinationList) {
+          if (item.name === value) {
+            target.destination = item;
+          }
+        }
       },
       price: (value) => {
         target.price = value;
@@ -257,8 +283,11 @@ export default class EventEdit extends Component {
       offer: (value) => {
         target.offer.push(value);
       },
-      time: (value) => {
+      start: (value) => {
         target.departureTime = moment(value);
+      },
+      end: (value) => {
+        target.arrivalTime = moment(value);
       }
     };
   }

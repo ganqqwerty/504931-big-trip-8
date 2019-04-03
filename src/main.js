@@ -3,11 +3,12 @@ import Event from './event.js';
 import EventEdit from './event-edit.js';
 import Filter from './filter.js';
 import {moneyChart, transportChart} from "./charts";
-import {Offer, Filters} from "./data";
+import {Offer, Filters, api} from "./data";
 
 const eventSection = document.querySelector(`.trip-day__items`);
 const filtersForm = document.querySelector(`.trip-filter`);
 const eventList = generateEventList();
+
 /**
  * @param {Array} array
  * @param {Element} itemToDelete
@@ -98,5 +99,10 @@ const priceCount = eventList.reduce((totalPrices, event) => {
 moneyChart.data.datasets[0].data = Object.values(priceCount);
 moneyChart.update();
 
-renderEvents(eventSection, eventList);
 renderFilters();
+
+api.getPoints()
+  .then((points) => {
+    renderEvents(eventSection, points);
+  });
+
