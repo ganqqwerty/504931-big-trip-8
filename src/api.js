@@ -37,7 +37,8 @@ export default class API {
   }
 
   getOffers() {
-
+    return this._load({url: `offers`})
+      .then(toJSON);
   }
 
   updateEvents() {

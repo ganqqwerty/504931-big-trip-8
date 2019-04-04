@@ -66,9 +66,17 @@ const Offer = {
 };
 
 let destinationList = [];
-api.getDestinations().then((destinations) => {
-  destinationList = destinations;
-});
+api.getDestinations()
+  .then((destinations) => {
+    destinationList = destinations;
+  });
+
+let offerList = [];
+api.getOffers()
+  .then((offers) => {
+    offerList = offers;
+  });
+
 const DESCRIPTION_LIST = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
@@ -179,4 +187,4 @@ const generateEventList = function (count = EVENT_QUANTITY) {
   return eventList;
 };
 
-export {generateEventList, Type, Offer, Filters, api, destinationList};
+export {generateEventList, Type, Offer, Filters, api, destinationList, offerList};

@@ -1,5 +1,5 @@
 import Component from './component.js';
-import {Type, Offer} from './data.js';
+import {Type, Offer, offerList} from './data.js';
 import moment from 'moment';
 
 export default class Event extends Component {
@@ -11,7 +11,7 @@ export default class Event extends Component {
     this._arrivalTime = data.arrivalTime;
     this._duration = moment.duration(data.arrivalTime.diff(data.departureTime));
     this._price = data.price;
-    this._offer = data.offer;
+    this._checkedOffers = data.checkedOffers;
     this._onEdit = null;
   }
   get title() {
@@ -28,15 +28,15 @@ export default class Event extends Component {
   }
 
   get totalPrice() {
-    return this._offer.reduce(function (totalPrice, current) {
-      return totalPrice + Offer[current].price;
+    return this._checkedOffers.reduce(function (totalPrice, current) {
+      return totalPrice + current.price;
     }, this._price);
   }
 
   get template() {
-    let offersList = this._offer.map((offer) => `
+    let offersList = this._checkedOffers.map((offer) => `
         <li>
-          <button class="trip-point__offer">${Offer[offer].title}</button>
+          <button class="trip-point__offer">${offer.name}</button>
         </li>
       `.trim()
     );
@@ -73,6 +73,6 @@ export default class Event extends Component {
     this._type = data.type;
     this._departureTime = data.departureTime;
     this._price = parseInt(data.price, 10);
-    this._offer = data.offer;
+    this._checkedOffers = data.checkedOffers;
   }
 }

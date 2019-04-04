@@ -10,7 +10,9 @@ export default class ModelEvents {
     this.arrivalTime = moment(data[`date_to`]);
     this.price = data[`base_price`];
     this.isFavorite = Boolean(data[`is_favorite`]);
-    this.offer = [];
+    this.checkedOffers = data.offers.filter((element) => element.accepted).map((element) => {
+      return {name: element.title, price: element.price};
+    });
   }
 
   static parseEvent(data) {

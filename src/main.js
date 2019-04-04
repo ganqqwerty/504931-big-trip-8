@@ -105,4 +105,3 @@ api.getPoints()
   .then((points) => {
     renderEvents(eventSection, points);
   });
-

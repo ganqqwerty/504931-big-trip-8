@@ -1,7 +1,7 @@
 import Component from './component.js';
 import flatpickr from 'flatpickr';
 import moment from 'moment';
-import {Type, Offer, destinationList} from './data.js';
+import {Type, destinationList, offerList} from './data.js';
 import createElement from './create-element.js';
 
 export default class EventEdit extends Component {
@@ -12,7 +12,7 @@ export default class EventEdit extends Component {
     this._arrivalTime = data.arrivalTime;
     this._price = data.price;
     this._destination = data.destination;
-    this._offer = data.offer;
+    this._checkedOffers = data.checkedOffers;
     this._onSubmit = null;
     this._onDelete = null;
     this._state.isFavorite = false;
@@ -21,6 +21,12 @@ export default class EventEdit extends Component {
     this._onChangeFavorite = this._onChangeFavorite.bind(this);
     this._onChangeType = this._onChangeType.bind(this);
     this._onChangeDestination = this._onChangeDestination.bind(this);
+    this._offer = offerList.reduce((acc, item) => {
+      if (item.type === data.type) {
+        acc = item.offers;
+      }
+      return acc;
+    }, []);
   }
 
   _processForm(formData) {
@@ -30,7 +36,8 @@ export default class EventEdit extends Component {
       price: ``,
       departureTime: ``,
       arrivalTime: ``,
-      offer: [],
+      offer: this._offer,
+      checkedOffers: [],
     };
 
     const eventEditMapper = EventEdit.createMapper(entry);
@@ -77,7 +84,6 @@ export default class EventEdit extends Component {
   }
 
   _onChangeDestination() {
-
     const formData = new FormData(this._element.querySelector(`form`));
     const newData = this._processForm(formData);
     this.update(newData);
@@ -111,6 +117,12 @@ export default class EventEdit extends Component {
     let destinationImageList = this._destination.pictures.map((picture) => `
     <img src="${picture.src}" alt="${picture.description}" class="point__destination-image">`
       .trim()
+    );
+    let offers = this._offer.map((offer) =>
+      `<input class="point__offers-input visually-hidden" type="checkbox" id="${offer.name}" name="offer" value="${offer.name}" ${this._checkedOffers.find((item) => item.name === offer.name) !== undefined && `checked`}>
+          <label for="${offer.name}" class="point__offers-label">
+          <span class="point__offer-service">${offer.name}</span> + €<span class="point__offer-price">${offer.price}</span>
+       </label>`.trim()
     );
     return `
     <article class="point">
@@ -187,25 +199,7 @@ export default class EventEdit extends Component {
             <h3 class="point__details-title">offers</h3>
 
             <div class="point__offers-wrap">
-              <input class="point__offers-input visually-hidden" type="checkbox" id="add-luggage" name="offer" value="luggage" ${this._offer.indexOf(`luggage`) !== -1 && `checked`}>
-              <label for="add-luggage" class="point__offers-label">
-                <span class="point__offer-service">Add luggage</span> + €<span class="point__offer-price">${Offer[`luggage`].price}</span>
-              </label>
-
-              <input class="point__offers-input visually-hidden" type="checkbox" id="switch-to-comfort-class" name="offer" value="class" ${this._offer.indexOf(`class`) !== -1 && `checked`}>
-              <label for="switch-to-comfort-class" class="point__offers-label">
-                <span class="point__offer-service">Switch to comfort class</span> + €<span class="point__offer-price">${Offer[`class`].price}</span>
-              </label>
-
-              <input class="point__offers-input visually-hidden" type="checkbox" id="add-meal" name="offer" value="meal" ${this._offer.indexOf(`meal`) !== -1 && `checked`}>
-              <label for="add-meal" class="point__offers-label">
-                <span class="point__offer-service">Add meal </span> + €<span class="point__offer-price">${Offer[`meal`].price}</span>
-              </label>
-
-              <input class="point__offers-input visually-hidden" type="checkbox" id="choose-seats" name="offer" value="seats" ${this._offer.indexOf(`seats`) !== -1 && `checked`}>
-              <label for="choose-seats" class="point__offers-label">
-                <span class="point__offer-service">Choose seats</span> + €<span class="point__offer-price">${Offer[`seats`].price}</span>
-              </label>
+             ${offers.join(``)}
             </div>
 
           </section>
@@ -220,7 +214,7 @@ export default class EventEdit extends Component {
       </form>
   </article>
     `.trim();
-  }
+  };
 
   // Вызов метода bind() возможен только после вызова render()
   bind() {
@@ -256,13 +250,12 @@ export default class EventEdit extends Component {
   }
 
   update(data) {
-
     this._destination = data.destination;
     this._type = data.type;
     this._price = data.price;
     this._arrivalTime = data.arrivalTime;
     this._departureTime = data.departureTime;
-    this._offer = data.offer;
+    this._checkedOffers = data.checkedOffers;
   }
 
   static createMapper(target) {
@@ -281,7 +274,8 @@ export default class EventEdit extends Component {
         target.price = value;
       },
       offer: (value) => {
-        target.offer.push(value);
+        let checkedOffer = target.offer.find((item) => item.name === value);
+        target.checkedOffers.push(checkedOffer);
       },
       start: (value) => {
         target.departureTime = moment(value);
@@ -291,4 +285,4 @@ export default class EventEdit extends Component {
       }
     };
   }
-}
+};
