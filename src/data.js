@@ -2,7 +2,7 @@ import moment from 'moment';
 import API from "./api";
 
 const AUTHORIZATION = `Basic eo0w590ik29889m`;
-const END_POINT = `https://es8-demo-srv.appspot.com/big-trip/`;
+const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 const EVENT_QUANTITY = 5;
 const PRICE_MIN = 1;

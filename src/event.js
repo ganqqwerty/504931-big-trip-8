@@ -1,10 +1,11 @@
 import Component from './component.js';
-import {Type, Offer, offerList} from './data.js';
+import {Type} from './data.js';
 import moment from 'moment';
 
 export default class Event extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._destination = data.destination;
     this._type = data.type;
     this._departureTime = data.departureTime;
@@ -72,6 +73,7 @@ export default class Event extends Component {
     this._destination = data.destination;
     this._type = data.type;
     this._departureTime = data.departureTime;
+    this._arrivalTime = data.arrivalTime;
     this._price = parseInt(data.price, 10);
     this._checkedOffers = data.checkedOffers;
   }

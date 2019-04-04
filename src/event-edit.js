@@ -7,6 +7,7 @@ import createElement from './create-element.js';
 export default class EventEdit extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._type = data.type;
     this._departureTime = data.departureTime;
     this._arrivalTime = data.arrivalTime;
@@ -27,6 +28,7 @@ export default class EventEdit extends Component {
       }
       return acc;
     }, []);
+    // console.log(this._offer);
   }
 
   _processForm(formData) {
@@ -65,36 +67,40 @@ export default class EventEdit extends Component {
   _onDeleteClick(evt) {
     evt.preventDefault();
     if (typeof this._onDelete === `function`) {
-      this._onDelete();
+      this._onDelete(this._id);
     }
   }
 
   _onChangeType(evt) {
-    this._element.querySelector(`.travel-way__label`).textContent = Type[evt.target.value];
+    const value = evt.target.value;
+    this._element.querySelector(`.travel-way__label`).textContent = Type[value];
+    this._checkedOffers = [];
+    this._offer = offerList.reduce((acc, item) => {
+      if (item.type === value) {
+        acc = item.offers;
+      }
+      return acc;
+    }, []);
+    this._partialUpdate();
   }
 
   _onChangeFavorite() {
     this._state.isFavorite = !this._state.isFavorite;
-    const formData = new FormData(this._element.querySelector(`form`));
-    const newData = this._processForm(formData);
-    this.update(newData);
-    this.unbind();
     this._partialUpdate();
-    this.bind();
   }
 
   _onChangeDestination() {
+    this._partialUpdate();
+  }
+
+  _partialUpdate() {
     const formData = new FormData(this._element.querySelector(`form`));
     const newData = this._processForm(formData);
     this.update(newData);
     this.unbind();
-    this._partialUpdate();
-    this.bind();
-  }
-
-  _partialUpdate() {
     let newElement = createElement(this.template);
     this._element.innerHTML = newElement.innerHTML;
+    this.bind();
   }
 
   set onSubmit(fn) {
@@ -214,7 +220,7 @@ export default class EventEdit extends Component {
       </form>
   </article>
     `.trim();
-  };
+  }
 
   // Вызов метода bind() возможен только после вызова render()
   bind() {
@@ -227,7 +233,8 @@ export default class EventEdit extends Component {
     this.element.querySelectorAll(`input[name="type"]`).forEach((radio) => {
       radio.addEventListener(`change`, this._onChangeType);
     });
-    this.element.querySelector(`.point__destination-input`).addEventListener(`change`, this._onChangeDestination);
+    this.element.querySelector(`.point__destination-input`)
+      .addEventListener(`change`, this._onChangeDestination);
     let timeStart = this._element.querySelector(`input[name='start']`);
     flatpickr(timeStart, {enableTime: true, dateFormat: `Y-m-d H:i`});
 
@@ -246,7 +253,8 @@ export default class EventEdit extends Component {
     this.element.querySelectorAll(`input[name="type"]`).forEach((radio) => {
       radio.removeEventListener(`change`, this._onChangeType);
     });
-    this.element.querySelector(`.point__destination-input`).removeEventListener(`change`, this._onChangeDestination);
+    this.element.querySelector(`.point__destination-input`)
+      .removeEventListener(`change`, this._onChangeDestination);
   }
 
   update(data) {
@@ -285,4 +293,4 @@ export default class EventEdit extends Component {
       }
     };
   }
-};
+}

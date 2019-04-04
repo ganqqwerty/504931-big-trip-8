@@ -39,26 +39,38 @@ const renderEvents = function (section, arr) {
     };
 
     editEventComponent.onSubmit = (newObject) => {
-      eventComponent.update(newObject);
-      eventComponent.render();
-      section.replaceChild(eventComponent.element, editEventComponent.element);
-      editEventComponent.unrender();
+      element.destination = newObject.destination;
+      element.type = newObject.type;
+      element.departureTime = newObject.departureTime;
+      element.arrivalTime = newObject.arrivalTime
+      element.price = parseInt(newObject.price, 10);
+      element.checkedOffers = newObject.checkedOffers;
+      api.updateEvents(element.id, element.toRAW())
+        .then((newPoint) => {
+          eventComponent.update(newPoint);
+          eventComponent.render();
+          section.replaceChild(eventComponent.element, editEventComponent.element);
+          editEventComponent.unrender();
+        });
     };
 
-    editEventComponent.onDelete = () => {
-      deleteEvent(arr, element);
-      section.removeChild(editEventComponent.element);
+    editEventComponent.onDelete = (id) => {
+      api.deleteEvent(id)
+        .then(() => api.getPoints())
+        .then((points) => {
+          renderEvents(eventSection, points);
+        });
     };
   });
 };
 
 
 // Фильтры
-const renderFilters = function () {
+const renderFilters = function (events) {
   Filters.forEach((item) => {
     const filter = new Filter(item.name, item.title);
     filter.onFilter = () => {
-      const filteredEvents = eventList.filter(item.filter);
+      const filteredEvents = events.filter(item.filter);
       renderEvents(eventSection, filteredEvents);
     };
     filtersForm.appendChild(filter.render());
@@ -99,9 +111,8 @@ const priceCount = eventList.reduce((totalPrices, event) => {
 moneyChart.data.datasets[0].data = Object.values(priceCount);
 moneyChart.update();
 
-renderFilters();
-
 api.getPoints()
   .then((points) => {
     renderEvents(eventSection, points);
+    renderFilters(points);
   });

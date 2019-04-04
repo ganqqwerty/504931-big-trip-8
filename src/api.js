@@ -6,7 +6,6 @@ const Method = {
   DELETE: `DELETE`
 };
 
-
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -41,12 +40,19 @@ export default class API {
       .then(toJSON);
   }
 
-  updateEvents() {
-
+  updateEvents(id, data) {
+    return this._load({
+      url: `points/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON)
+      .then(ModelEvents.parseEvent);
   }
 
-  deleteEvent() {
-
+  deleteEvent(id) {
+    return this._load({url: `points/${id}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
@@ -55,8 +61,7 @@ export default class API {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        console.error(`fetch error: ${err}`);
         throw err;
       });
   }
-};
+}

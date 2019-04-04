@@ -15,6 +15,21 @@ export default class ModelEvents {
     });
   }
 
+  toRAW() {
+    return {
+      'id': this.id,
+      'destination': this.destination,
+      'type': this.type,
+      'data_form': this.departureTime.format(`X`),
+      'data_to': this.arrivalTime.format(`X`),
+      'base_price': this.price,
+      'is_favorite': this.isFavorite,
+      'offers': this.checkedOffers.map((element) => {
+        return {title: element.name, price: element.price, accepted: true};
+      })
+    };
+  }
+
   static parseEvent(data) {
     return new ModelEvents(data);
   }
