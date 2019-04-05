@@ -22,7 +22,7 @@ export default class Filter extends Component {
   get template() {
     return `
       <span>
-        <input type="radio" id="filter-${this._name}" name="filter" value="${this._name}" checked>
+        <input type="radio" id="filter-${this._name}" name="filter" value="${this._name}">
          <label class="trip-filter__item" for="filter-${this._name}">${this._title}</label>        
       </span>
         `.trim();
