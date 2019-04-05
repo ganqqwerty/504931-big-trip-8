@@ -28,7 +28,6 @@ export default class EventEdit extends Component {
       }
       return acc;
     }, []);
-    // console.log(this._offer);
   }
 
   _processForm(formData) {
@@ -255,6 +254,54 @@ export default class EventEdit extends Component {
     });
     this.element.querySelector(`.point__destination-input`)
       .removeEventListener(`change`, this._onChangeDestination);
+  }
+
+  onSaveBlock() {
+    this._element.querySelectorAll(`form input`).forEach((item) => {
+      item.disabled = true;
+    });
+    this._element.querySelectorAll(`.point__button`).forEach((item) => {
+      item.disabled = true;
+    });
+    this._element.querySelector(`.point__button--save`).textContent = `Saving...`;
+    this._element.style.border = `none`;
+    this._element.classList.remove(`shake`);
+  }
+
+  onSaveUnblock() {
+    this._element.querySelectorAll(`form input`).forEach((item) => {
+      item.disabled = false;
+    });
+    this._element.querySelectorAll(`.point__button`).forEach((item) => {
+      item.disabled = false;
+    });
+    this._element.querySelector(`.point__button--save`).textContent = `Save`;
+    this._element.style.border = `1px solid red`;
+    this._element.classList.add(`shake`);
+  }
+
+  onDeleteBlock() {
+    this._element.querySelectorAll(`form input`).forEach((item) => {
+      item.disabled = true;
+    });
+    this._element.querySelectorAll(`.point__button`).forEach((item) => {
+      item.disabled = true;
+    });
+    this._element.querySelector(`button[type="reset"]`).textContent = `Deleting...`;
+    this._element.style.border = `none`;
+    this._element.classList.remove(`shake`);
+  }
+
+  onDeleteUnblock() {
+    this._element.querySelectorAll(`form input`).forEach((item) => {
+      item.disabled = false;
+    });
+    this._element.querySelectorAll(`.point__button`).forEach((item) => {
+      item.disabled = false;
+    });
+    this._element.querySelector(`button[type="reset"]`).textContent = `Delete`;
+    this._element.style.border = `1px solid red`;
+    this._element.classList.add(`shake`);
   }
 
   update(data) {

@@ -24,7 +24,8 @@ export default class API {
     this._authorization = authorization;
   }
 
-  getPoints() {
+  getPoints(onLoad) {
+    onLoad();
     return this._load({url: `points`})
       .then(toJSON)
       .then(ModelEvents.parseEvents);

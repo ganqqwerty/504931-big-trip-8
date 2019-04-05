@@ -1,23 +1,52 @@
-import {generateEventList} from './data.js';
 import Event from './event.js';
 import EventEdit from './event-edit.js';
 import Filter from './filter.js';
 import {moneyChart, transportChart} from "./charts";
-import {Offer, Filters, api} from "./data";
+import {Filters, api} from "./data";
 
 const eventSection = document.querySelector(`.trip-day__items`);
 const filtersForm = document.querySelector(`.trip-filter`);
-const eventList = generateEventList();
+const onLoad = () => {
+  eventSection.innerHTML = `Loading route...`;
+};
 
-/**
- * @param {Array} array
- * @param {Element} itemToDelete
- * @return {Array}
- */
-const deleteEvent = (array, itemToDelete) => {
-  const index = array.findIndex((it) => it === itemToDelete);
-  delete array[index];
-  return array;
+// Статистика транспорта
+const transportData = function (events) {
+  const eventTypes = events.map((item) => item.type);
+
+  const filteredTransportTypes = eventTypes.filter((it) => it !== `checkin` && it !== `sightseeing`);
+  const counts = filteredTransportTypes.reduce((arr, current) => {
+    if (arr[current] !== undefined) {
+      arr[current]++;
+    } else {
+      arr[current] = 1;
+    }
+    return arr;
+  }, []);
+
+  transportChart.data.labels = [...new Set(filteredTransportTypes)];
+  transportChart.data.datasets[0].data = Object.values(counts);
+  transportChart.update();
+};
+
+
+// Статистика затрат
+const moneyData = function (events) {
+  const eventTypes = events.map((item) => item.type);
+  moneyChart.data.labels = [...new Set(eventTypes)];
+  const priceCount = events.reduce((totalPrices, event) => {
+    let price = event.checkedOffers.reduce(function (totalPrice, current) {
+      return totalPrice + current.price;
+    }, event.price);
+    if (totalPrices[event.type] !== undefined) {
+      totalPrices[event.type] += price;
+    } else {
+      totalPrices[event.type] = price;
+    }
+    return totalPrices;
+  }, []);
+  moneyChart.data.datasets[0].data = Object.values(priceCount);
+  moneyChart.update();
 };
 
 /**
@@ -42,28 +71,54 @@ const renderEvents = function (section, arr) {
       element.destination = newObject.destination;
       element.type = newObject.type;
       element.departureTime = newObject.departureTime;
-      element.arrivalTime = newObject.arrivalTime
+      element.arrivalTime = newObject.arrivalTime;
       element.price = parseInt(newObject.price, 10);
       element.checkedOffers = newObject.checkedOffers;
-      api.updateEvents(element.id, element.toRAW())
-        .then((newPoint) => {
-          eventComponent.update(newPoint);
-          eventComponent.render();
-          section.replaceChild(eventComponent.element, editEventComponent.element);
-          editEventComponent.unrender();
+      editEventComponent.onSaveBlock();
+
+      load(true)
+        .then(() => {
+          api.updateEvents(element.id, element.toRAW())
+            .then((newPoint) => {
+              eventComponent.update(newPoint);
+              eventComponent.render();
+              section.replaceChild(eventComponent.element, editEventComponent.element);
+              editEventComponent.unrender();
+            });
+        })
+        .catch(() => {
+          editEventComponent.onSaveUnblock();
         });
     };
 
     editEventComponent.onDelete = (id) => {
+      editEventComponent.onDeleteBlock();
       api.deleteEvent(id)
-        .then(() => api.getPoints())
+        .then(
+            () => api.getPoints(onLoad))
         .then((points) => {
           renderEvents(eventSection, points);
+        })
+        .catch(() => {
+          editEventComponent.onDeleteUnblock();
         });
     };
   });
 };
 
+const load = (isSuccess) => {
+  return new Promise((res, rej) => {
+    setTimeout(isSuccess ? res : rej, 10000);
+  });
+};
+
+api.getPoints(onLoad)
+  .then((points) => {
+    renderEvents(eventSection, points);
+    renderFilters(points);
+    transportData(points);
+    moneyData(points);
+  });
 
 // Фильтры
 const renderFilters = function (events) {
@@ -77,42 +132,3 @@ const renderFilters = function (events) {
   });
 };
 
-
-// Статистика транспорта
-const eventTypes = eventList.map((item) => item.type);
-
-const filteredTransportTypes = eventTypes.filter((it) => it !== `checkin` && it !== `sightseeing`);
-const counts = filteredTransportTypes.reduce((arr, current) => {
-  if (arr[current] !== undefined) {
-    arr[current]++;
-  } else {
-    arr[current] = 1;
-  }
-  return arr;
-}, []);
-
-transportChart.data.labels = [...new Set(filteredTransportTypes)];
-transportChart.data.datasets[0].data = Object.values(counts);
-transportChart.update();
-
-// Статистика затрат
-moneyChart.data.labels = [...new Set(eventTypes)];
-const priceCount = eventList.reduce((totalPrices, event) => {
-  let price = event.offer.reduce(function (totalPrice, current) {
-    return totalPrice + Offer[current].price;
-  }, event.price);
-  if (totalPrices[event.type] !== undefined) {
-    totalPrices[event.type] += price;
-  } else {
-    totalPrices[event.type] = price;
-  }
-  return totalPrices;
-}, []);
-moneyChart.data.datasets[0].data = Object.values(priceCount);
-moneyChart.update();
-
-api.getPoints()
-  .then((points) => {
-    renderEvents(eventSection, points);
-    renderFilters(points);
-  });
