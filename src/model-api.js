@@ -20,8 +20,8 @@ export default class ModelEvents {
       'id': this.id,
       'destination': this.destination,
       'type': this.type,
-      'data_form': this.departureTime.format(`X`),
-      'data_to': this.arrivalTime.format(`X`),
+      'date_from': +this.departureTime.format(`x`),
+      'date_to': +this.arrivalTime.format(`x`),
       'base_price': this.price,
       'is_favorite': this.isFavorite,
       'offers': this.checkedOffers.map((element) => {

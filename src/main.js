@@ -3,12 +3,25 @@ import EventEdit from './event-edit.js';
 import Filter from './filter.js';
 import {moneyChart, transportChart} from "./charts";
 import {Filters, api} from "./data";
+import Provider from './provider.js';
+import Store from './store.js';
 
+const EVENTS_STORE_KEY = `events-store-key`;
 const eventSection = document.querySelector(`.trip-day__items`);
 const filtersForm = document.querySelector(`.trip-filter`);
+const store = new Store(EVENTS_STORE_KEY, localStorage);
+const provider = new Provider(api, store);
 const onLoad = () => {
   eventSection.innerHTML = `Loading route...`;
 };
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncEvents();
+});
 
 // Статистика транспорта
 const transportData = function (events) {
@@ -78,7 +91,7 @@ const renderEvents = function (section, arr) {
 
       load(true)
         .then(() => {
-          api.updateEvents(element.id, element.toRAW())
+          provider.updateEvents(element.id, element.toRAW())
             .then((newPoint) => {
               eventComponent.update(newPoint);
               eventComponent.render();
@@ -93,9 +106,9 @@ const renderEvents = function (section, arr) {
 
     editEventComponent.onDelete = (id) => {
       editEventComponent.onDeleteBlock();
-      api.deleteEvent(id)
+      provider.deleteEvent(id)
         .then(
-            () => api.getPoints(onLoad))
+            () => provider.getPoints(onLoad))
         .then((points) => {
           renderEvents(eventSection, points);
         })
@@ -108,11 +121,11 @@ const renderEvents = function (section, arr) {
 
 const load = (isSuccess) => {
   return new Promise((res, rej) => {
-    setTimeout(isSuccess ? res : rej, 10000);
+    setTimeout(isSuccess ? res : rej, 5000);
   });
 };
 
-api.getPoints(onLoad)
+provider.getPoints(onLoad)
   .then((points) => {
     renderEvents(eventSection, points);
     renderFilters(points);
